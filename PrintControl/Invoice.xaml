@@ -1,0 +1,77 @@
+﻿<UserControl x:Class="PrintControl.Invoice"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk">
+    <StackPanel>
+        <Button Content="Роздрукувати" x:Name="btnPrint" Click="PrintButtonClick" />
+        <Border BorderThickness="1" BorderBrush="#FF504F4F">
+            <ScrollViewer>
+                <Grid x:Name="LayoutRoot" Width="800" IsHitTestVisible="False">
+                    <Grid Margin="50">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="ТзОВ-фірма ''Пародент''" HorizontalAlignment="Center" FontSize="18" Grid.Row="0" />
+                        <TextBlock Text="План лікування" HorizontalAlignment="Center" FontSize="28"  Grid.Row="1" Margin="0,15" />
+
+                        <sdk:DataGrid ItemsSource="{Binding Screen.ProvidedServices, Mode=OneWay}" AutoGenerateColumns="False" Width="700" Grid.Row="2" FontSize="12">
+                            <sdk:DataGrid.Columns>
+                                <sdk:DataGridTextColumn Binding="{Binding Service.Code}" CanUserSort="True" DisplayIndex="0" Header="Код" Width="68" />
+                                <sdk:DataGridTemplateColumn CanUserSort="True" DisplayIndex="1" Header="Надані послуги" Width="400">
+                                    <sdk:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock TextWrapping="Wrap" Text="{Binding Service.Name}" />
+                                        </DataTemplate>
+                                    </sdk:DataGridTemplateColumn.CellTemplate>
+                                </sdk:DataGridTemplateColumn >
+                                <sdk:DataGridTextColumn Binding="{Binding Count}" CanUserSort="True" DisplayIndex="2" Header="Кількість" Width="80" />
+                                <sdk:DataGridTextColumn Binding="{Binding Service.Price}" CanUserSort="True" DisplayIndex="3" Header="Ціна" Width="75" />
+                                <sdk:DataGridTextColumn Binding="{Binding Price}" CanUserSort="True" DisplayIndex="4" Header="Сума" Width="75" />
+                            </sdk:DataGrid.Columns>
+                        </sdk:DataGrid>
+
+                        <TextBlock Grid.Row="3" TextAlignment="Right" Margin="10,5" FontSize="14">
+                            <Run Text="Загальна вартість: " />
+                            <Run Text="{Binding Screen.Invoices.SelectedItem.TotalPrice, Mode=OneWay}" />
+                            <Run Text="{Binding Screen.Invoice.TotalPrice, Mode=OneWay}" />
+                            <Run Text=" грн." />
+                            <LineBreak />
+                            <LineBreak />
+                        </TextBlock>
+
+                        <TextBlock Grid.Row="4" TextAlignment="Center" Margin="0,5,0,0" TextWrapping="Wrap" FontSize="14">
+                            <Run Text="З планом лікування, переліком та орієнтовною вартістю стоматологічних послуг я," />
+                            <LineBreak />
+                            <!-- Details screen -->
+                            <Run Text="{Binding Screen.Invoices.SelectedItem.Customer.FullName, Mode=OneWay}" />
+                            <!-- Invoice screen -->
+                            <Run Text="{Binding Screen.Invoice.Customer.FullName, Mode=OneWay}" />
+                            <Run Text=", ознайомлений(а) та згідний(а)." />
+                            <LineBreak />
+                            <Run Text="Вартість лікування не є остаточною і може бути змінена в процесі лікування за згодою лікаря і пацієнта." />
+                            <LineBreak />
+                            <LineBreak />
+                            <LineBreak />
+                            <LineBreak />
+                            <LineBreak />
+                            <Run Text="Дата: "  />
+                            <Run Text="{Binding Screen.Invoices.SelectedItem.GenerateDateDisplay, Mode=OneWay}" />
+                            <Run Text="{Binding Screen.Invoice.GenerateDateDisplay, Mode=OneWay}" />
+                            <Run Text="                                                                                                                      " />
+                            <LineBreak />
+                            <LineBreak />
+                            <LineBreak />
+                            <Run Text="Пацієнт ____________________                                               Лікар ____________________" />
+                        </TextBlock>
+                    </Grid>
+                </Grid>
+            </ScrollViewer>
+        </Border>
+    </StackPanel>
+</UserControl>
+

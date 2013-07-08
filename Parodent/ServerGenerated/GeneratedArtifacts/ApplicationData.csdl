@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Namespace="ApplicationData" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+  <Association Name="Invoice_Customer">
+    <End Role="Customer" Type="ApplicationData.Customer" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Invoice" Type="ApplicationData.Invoice" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Invoice">
+        <PropertyRef Name="Report_Customer" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ProvidedService_Invoice">
+    <End Role="Invoice" Type="ApplicationData.Invoice" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="ProvidedService" Type="ApplicationData.ProvidedService" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Invoice">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProvidedService">
+        <PropertyRef Name="ProvidedServices_Report" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ProvidedService_Service">
+    <End Role="Service" Type="ApplicationData.Service" Multiplicity="1" />
+    <End Role="ProvidedService" Type="ApplicationData.ProvidedService" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Service">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProvidedService">
+        <PropertyRef Name="ProvidedServices_Service" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Service">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" ConcurrencyMode="Fixed" />
+    <Property Name="Code" Type="Int32" Nullable="false" ConcurrencyMode="Fixed" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="255" ConcurrencyMode="Fixed" />
+    <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="2" ConcurrencyMode="Fixed" />
+    <Property Name="Description" Type="String" MaxLength="1024" ConcurrencyMode="Fixed" />
+    <NavigationProperty Name="ProvidedServices" Relationship="ApplicationData.ProvidedService_Service" ToRole="ProvidedService" FromRole="Service" />
+  </EntityType>
+  <EntityType Name="Customer">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" ConcurrencyMode="Fixed" />
+    <Property Name="FirstName" Type="String" Nullable="false" MaxLength="255" ConcurrencyMode="Fixed" />
+    <Property Name="MiddleName" Type="String" MaxLength="255" ConcurrencyMode="Fixed" />
+    <Property Name="LastName" Type="String" MaxLength="255" ConcurrencyMode="Fixed" />
+    <NavigationProperty Name="Invoices" Relationship="ApplicationData.Invoice_Customer" ToRole="Invoice" FromRole="Customer" />
+  </EntityType>
+  <EntityType Name="Invoice">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" ConcurrencyMode="Fixed" />
+    <Property Name="GenerateDate" Type="DateTime" Nullable="false" ConcurrencyMode="Fixed" />
+    <Property Name="Report_Customer" Type="Int32" Nullable="false" ConcurrencyMode="Fixed" />
+    <NavigationProperty Name="Customer" Relationship="ApplicationData.Invoice_Customer" ToRole="Customer" FromRole="Invoice" />
+    <NavigationProperty Name="ProvidedServices" Relationship="ApplicationData.ProvidedService_Invoice" ToRole="ProvidedService" FromRole="Invoice" />
+  </EntityType>
+  <EntityType Name="ProvidedService">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" ConcurrencyMode="Fixed" />
+    <Property Name="Count" Type="Int32" Nullable="false" ConcurrencyMode="Fixed" />
+    <Property Name="ProvidedServices_Report" Type="Int32" Nullable="false" ConcurrencyMode="Fixed" />
+    <Property Name="ProvidedServices_Service" Type="Int32" Nullable="false" ConcurrencyMode="Fixed" />
+    <NavigationProperty Name="Invoice" Relationship="ApplicationData.ProvidedService_Invoice" ToRole="Invoice" FromRole="ProvidedService" />
+    <NavigationProperty Name="Service" Relationship="ApplicationData.ProvidedService_Service" ToRole="Service" FromRole="ProvidedService" />
+  </EntityType>
+  <EntityContainer Name="ApplicationDataObjectContext">
+    <EntitySet Name="Services" EntityType="ApplicationData.Service" />
+    <EntitySet Name="Customers" EntityType="ApplicationData.Customer" />
+    <EntitySet Name="Invoices" EntityType="ApplicationData.Invoice" />
+    <EntitySet Name="ProvidedServices" EntityType="ApplicationData.ProvidedService" />
+    <AssociationSet Name="Invoice_Customer" Association="ApplicationData.Invoice_Customer">
+      <End Role="Customer" EntitySet="Customers" />
+      <End Role="Invoice" EntitySet="Invoices" />
+    </AssociationSet>
+    <AssociationSet Name="ProvidedService_Invoice" Association="ApplicationData.ProvidedService_Invoice">
+      <End Role="Invoice" EntitySet="Invoices" />
+      <End Role="ProvidedService" EntitySet="ProvidedServices" />
+    </AssociationSet>
+    <AssociationSet Name="ProvidedService_Service" Association="ApplicationData.ProvidedService_Service">
+      <End Role="Service" EntitySet="Services" />
+      <End Role="ProvidedService" EntitySet="ProvidedServices" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

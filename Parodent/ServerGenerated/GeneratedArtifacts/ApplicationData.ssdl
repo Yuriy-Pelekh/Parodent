@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="ApplicationDataStore" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+  <EntityContainer Name="ApplicationDataStore">
+    <EntitySet Name="Services" EntityType="ApplicationDataStore.Service" store:Type="Tables" Schema="dbo" Table="Services" />
+    <EntitySet Name="Customers" EntityType="ApplicationDataStore.Customer" store:Type="Tables" Schema="dbo" Table="Customers" />
+    <EntitySet Name="Invoices" EntityType="ApplicationDataStore.Invoice" store:Type="Tables" Schema="dbo" Table="Invoices" />
+    <EntitySet Name="ProvidedServices" EntityType="ApplicationDataStore.ProvidedService" store:Type="Tables" Schema="dbo" Table="ProvidedServices" />
+    <AssociationSet Name="Invoice_Customer" Association="ApplicationDataStore.Invoice_Customer">
+      <End Role="Customer" EntitySet="Customers" />
+      <End Role="Invoice" EntitySet="Invoices" />
+    </AssociationSet>
+    <AssociationSet Name="ProvidedService_Invoice" Association="ApplicationDataStore.ProvidedService_Invoice">
+      <End Role="Invoice" EntitySet="Invoices" />
+      <End Role="ProvidedService" EntitySet="ProvidedServices" />
+    </AssociationSet>
+    <AssociationSet Name="ProvidedService_Service" Association="ApplicationDataStore.ProvidedService_Service">
+      <End Role="Service" EntitySet="Services" />
+      <End Role="ProvidedService" EntitySet="ProvidedServices" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Service">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Code" Type="int" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
+    <Property Name="Price" Type="decimal" Nullable="false" Precision="18" Scale="2" />
+    <Property Name="Description" Type="nvarchar" MaxLength="1024" />
+  </EntityType>
+  <EntityType Name="Customer">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="FirstName" Type="nvarchar" Nullable="false" MaxLength="255" />
+    <Property Name="MiddleName" Type="nvarchar" MaxLength="255" />
+    <Property Name="LastName" Type="nvarchar" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="Invoice">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="GenerateDate" Type="datetime" Nullable="false" />
+    <Property Name="Report_Customer" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ProvidedService">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Count" Type="int" Nullable="false" />
+    <Property Name="ProvidedServices_Report" Type="int" Nullable="false" />
+    <Property Name="ProvidedServices_Service" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="Invoice_Customer">
+    <End Role="Customer" Type="ApplicationDataStore.Customer" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Invoice" Type="ApplicationDataStore.Invoice" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Invoice">
+        <PropertyRef Name="Report_Customer" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ProvidedService_Invoice">
+    <End Role="Invoice" Type="ApplicationDataStore.Invoice" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="ProvidedService" Type="ApplicationDataStore.ProvidedService" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Invoice">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProvidedService">
+        <PropertyRef Name="ProvidedServices_Report" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ProvidedService_Service">
+    <End Role="Service" Type="ApplicationDataStore.Service" Multiplicity="1" />
+    <End Role="ProvidedService" Type="ApplicationDataStore.ProvidedService" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Service">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProvidedService">
+        <PropertyRef Name="ProvidedServices_Service" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
